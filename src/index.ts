@@ -31,7 +31,7 @@ class MundiExtension {
   }
 
   public init(): void {
-    console.log('[Mundi] Initializing Haven & Bloomr Archetype...');
+    console.log('[Haven] Initializing Haven & Bloomr Archetype...');
 
     // Create or locate mount container
     let container = document.getElementById('haven-root');
@@ -55,7 +55,7 @@ class MundiExtension {
     // Initial render
     this.render();
 
-    console.log('[Mundi] Ready.');
+    console.log('[Haven] Ready.');
   }
 
   private createFloatingToggle(): void {
@@ -64,8 +64,8 @@ class MundiExtension {
     const toggle = document.createElement('button');
     toggle.id = 'haven-floating-toggle';
     toggle.className = 'haven-floating-launcher';
-    toggle.innerHTML = '✦ Mundi OS';
-    toggle.title = 'Toggle Mundi Game Interface (Alt + M)';
+    toggle.innerHTML = '✦ Haven OS';
+    toggle.title = 'Toggle Haven Game Interface (Alt + M)';
 
     toggle.addEventListener('click', () => {
       this.toggleVisibility();

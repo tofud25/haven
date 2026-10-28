@@ -1,4 +1,4 @@
-# Mundi: Haven & Bloomr Archetype (v2.0)
+# Haven: Life, Academy & Dungeon Archetype (v2.0)
 
 A comprehensive SillyTavern extension that recreates 4 modular game systems:
 1. **🏰 Haven House**: Architectural cutaway dollhouse cross-section room builder, estate financial ledger (rent, comfort, resident tags, room construction).
@@ -45,7 +45,7 @@ A comprehensive SillyTavern extension that recreates 4 modular game systems:
 1. In SillyTavern, open **Extensions** (cube icon) -> **Install Extension**.
 2. Paste the git repository URL:
    ```
-   https://github.com/tofud25/mundi.git
+   https://github.com/tofud25/haven.git
    ```
 3. Click **Install**. Once installed, reload SillyTavern.
 
@@ -53,7 +53,7 @@ A comprehensive SillyTavern extension that recreates 4 modular game systems:
 Clone directly into SillyTavern's `public/scripts/extensions/third-party/` folder:
 ```bash
 cd SillyTavern/public/scripts/extensions/third-party
-git clone https://github.com/tofud25/mundi.git
+git clone https://github.com/tofud25/haven.git
 ```
 
 ---

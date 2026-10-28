@@ -21,7 +21,7 @@ export class NavComponent {
         <div class="haven-nav-left">
           <div class="haven-brand">
             <span class="haven-brand-gem">✦</span>
-            <span class="haven-brand-title">MUNDI</span>
+            <span class="haven-brand-title">HAVEN</span>
             <span class="haven-brand-sub">ARCHETYPE</span>
           </div>
           
