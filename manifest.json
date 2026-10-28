@@ -1,15 +1,12 @@
 {
-    "display_name": "Mundi",
-    "loading_order": 100,
-    "requires": [],
-    "optional": [
-        "expressions"
-    ],
-    "js": "dist/index.js",
-    "css": "style.css",
-    "author": "Thales",
-    "version": "0.2.0",
-    "homePage": "https://github.com/tjalis/Mundi",
-    "auto_update": false,
-    "description": "Mundi: an open-world RPG creator for SillyTavern. Worlds with maps, time, routines, needs and a full visual-novel scene, built on SillyTavern's own cards, personas, lorebooks and group chats."
+  "display_name": "Haven & Bloomr: Life, Academy & Dungeon",
+  "loading_order": 100,
+  "requires": [],
+  "optional": [],
+  "js": "dist/index.js",
+  "css": "style.css",
+  "author": "Antigravity",
+  "version": "2.0.0",
+  "homePage": "https://github.com/tofud25/mundi",
+  "description": "Comprehensive SillyTavern extension featuring Haven House (estate builder), Nordhaven VN dialogue, The Undercroft turn-based combat, and Bloomr simulated tablet OS with free AI image generation."
 }

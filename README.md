@@ -1,77 +1,81 @@
-# Mundi
+# Mundi: Haven & Bloomr Archetype (v2.0)
 
-**Open worlds inside SillyTavern.** Mundi turns a SillyTavern group chat into a life you live: a city with a map and a clock, needs to look after, a job, bills, people with their own days, and the story the AI writes around what you do.
+A comprehensive SillyTavern extension that recreates 4 modular game systems:
+1. **🏰 Haven House**: Architectural cutaway dollhouse cross-section room builder, estate financial ledger (rent, comfort, resident tags, room construction).
+2. **🎓 Nordhaven Academy Visual Novel**: High-resolution anime/gothic layered character sprites (Elowen Frost & Morgause Vane), dynamic world calendar/clock, typewriter dialogue box, and interactive prompt bar.
+3. **⚔️ The Undercroft**: Turn-based RPG dungeon crawler, party status monitors (HP/MP gauges), glowing slime monsters, real-time battle telemetry log, and action controls (`Attack`, `Loot`, `Rest`, `Next Wave`, `Turn Back`).
+4. **📱 Bloomr Tablet OS**: Simulated futuristic in-game tablet OS with social media feed, direct messages (DMs), student work shifts/jobs, character attribute sheet (STR, DEX, INT, Energy), and free real-time AI image generation powered by Pollinations Flux/SDXL.
 
-<p align="center"><img src="docs/map.jpg" alt="Midtown, the map of Porto Alto"></p>
+---
 
-It is a SillyTavern **extension** (no server plugin). Everything is built on what SillyTavern already has: your character cards, personas, lorebooks and group chats. A save *is* a chat.
+## 🌟 Key Features
 
-## What you can do
+### 1. Estate Management (Haven House)
+- Interactive 4-floor cross-section:
+  - **Roof & Attic**: The attic room
+  - **2nd Floor**: The master bedroom, The bathroom, The west bedroom, The east bedroom
+  - **Ground Floor**: The hearth room, The family room, The garden
+  - **Basement**: The study, The nanny's room, The nursery
+- Live cash ledger tracking weekly rent ($800/wk), construction expenses, and dungeon earnings.
+- Chamber inspection drawer with one-click construction and resident assignments.
 
-- **Live in a world.** A map of places, time that moves when you act, weather and seasons. Energy, hunger, thirst, mood and hygiene drop over time.
-- **Talk.** A visual-novel scene with Say / Do / Story / See. Type `@` to pick who answers. The engine keeps the numbers (time, money, relationships); the AI writes the scene.
-- **Relationships.** Friendship and romance bars with levels, approval, feelings that fade, dates, proposals, marriage, a baby. People keep their own routines: find them, or text them.
-- **Work and money.** Job interviews (a d20 roll with your traits as bonus), shifts, promotions, quick gigs, courses that teach traits, weekly rent, water and power that get cut off if you don't pay. Easy / Normal / Hard.
-- **A phone.** Messages, People, Jobs, Bank, Homes, Chirp (social), Spark (dating), Calendar, Journal, Shop, Goals, Profile and Help.
-- **Households and "Play as".** Live with family or roommates, then switch to playing any of them.
-- **A diary.** Each night the day is written as a short entry, so the story remembers what happened.
-- **Make it yours.** Layouts (Visual novel, Classic, Cards), colors with transparency, presets that tint the HUD glass, a world creator for your own maps and rules.
-- **Phones.** Upright and sideways layouts, with their own scale for the HUD.
-- **A tour.** Stella shows you around in a practice world. No AI needed.
-- **Home mode.** A more role-play focused way to play: one house, the characters you choose, no work or bills. Pick the rooms, draw a floor plan, go out and come back.
-- **In your language.** The interface is in English, Português (Brasil) and Español (Settings → Interface → Language).
+### 2. Visual Novel Stage (Nordhaven Academy)
+- High-fidelity visual novel presentation with layered character sprites.
+- Typewriter dialogue box with speaker accents, backlog history, auto-advance, and previous/next dialogue traversal.
+- Quick action pills for instantaneous roleplay responses.
+- Injects full world state into SillyTavern LLMs (LiteRouter, GLM-5.3-flash, Claude, OpenAI, etc.).
 
-It comes with **Porto Alto**, a modern coastal state with five cities (Midtown, Palm Coast, Maple Heights, Pinecrest and Green Valley), and **The Shared House** for Home mode. The medieval style (Valdoria) and the RPG mode are coming in a later update.
+### 3. The Undercroft (Turn-based RPG)
+- Flooded crypts arena with bioluminescent atmospheric effects.
+- Dynamic party HP/MP tracking and monster combat mechanics.
+- In-battle party banter bubbles and live combat telemetry log.
 
-See [CHANGELOG.md](CHANGELOG.md) for what changed in each version.
+### 4. Bloomr Tablet OS
+- Realistic tablet hardware frame with notch, battery indicator, and carrier status.
+- Social feed with user avatars, post timestamps, tagged handles, likes, and comment threads.
+- Zero-configuration AI photo generator: Click `Attach AI Art` or `Regen Art` to produce instant Flux/SDXL images for posts at zero cost and without API keys.
+- Direct messaging (DMs) with classmates and residents.
+- Work shifts for earning gold and character stats dashboard.
 
-## Screenshots (0.2)
+---
 
-| | | |
-|---|---|---|
-| ![Midtown, the map of Porto Alto](docs/map.jpg) | ![Palm Coast, the beach city](docs/map-palmcoast.jpg) | ![Choosing a city of Porto Alto](docs/map-cities.jpg) |
-| ![The floor plan of the Shared House](docs/house-plan.jpg) | ![At home, in the bedroom](docs/home-bedroom.jpg) | ![An apartment at 13:30](docs/home-apartment.jpg) |
-| ![Sky Hotel & Rooftop Bar](docs/scene-sky.jpg) | ![The university](docs/scene-university.jpg) | ![The stadium](docs/scene-stadium.jpg) |
+## 🚀 Installation in SillyTavern
 
-## Screenshots
+### Method 1: Install via Extension Manager
+1. In SillyTavern, open **Extensions** (cube icon) -> **Install Extension**.
+2. Paste the git repository URL:
+   ```
+   https://github.com/tofud25/mundi.git
+   ```
+3. Click **Install**. Once installed, reload SillyTavern.
 
-| | |
-|---|---|
-| ![At home, with the phone open](docs/home.jpg) | ![Courses](docs/courses.jpg) |
-| ![A match on Spark, the dating app](docs/spark.jpg) | ![Someone's card in a scene](docs/people.jpg) |
-| ![How the day went](docs/diary.jpg) | ![Chirp, the social network](docs/chirp.jpg) |
-
-On a phone:
-
-<p align="center">
-  <img src="docs/phone-scene.jpg" width="23%" alt="A scene on a phone">
-  <img src="docs/phone-homes.jpg" width="23%" alt="The Homes app">
-  <img src="docs/phone-profile.jpg" width="23%" alt="The Profile app">
-</p>
-
-## Install
-
-1. In SillyTavern, open **Extensions → Install extension**.
-2. Paste `https://github.com/tjalis/Mundi` and install.
-3. Reload SillyTavern (Ctrl+F5). Open Mundi from the **Extensions menu** (the magic wand next to the chat box). The tour starts the first time you open it.
-
-Works with SillyTavern 1.19 or newer. Any chat-completion or text-completion API works; a context of about 30k tokens is a good size.
-
-
-## Building from source
-
-The repository ships the compiled `dist/` and `style.css`, so you don't need to build to use it. To change the code:
-
-```sh
-npm i -g typescript
-./build.sh        # src/*.ts → dist/, css/*.css → style.css
+### Method 2: Manual Clone
+Clone directly into SillyTavern's `public/scripts/extensions/third-party/` folder:
+```bash
+cd SillyTavern/public/scripts/extensions/third-party
+git clone https://github.com/tofud25/mundi.git
 ```
 
-## Credits
+---
 
-- Sounds by [Kenney](https://kenney.nl) (CC0).
-- Seraphina is SillyTavern's default character; her picture is bundled for the tour.
+## 🎮 Controls & Shortcuts
 
-## License
+| Action | Shortcut / Control |
+|---|---|
+| Toggle Mundi OS Overlay | `Alt + M` or click the floating `✦ Mundi OS` button |
+| Switch Game View | Click tabs in the top navigation bar (Haven House, Academy VN, Undercroft, Bloomr OS) |
+| Advance Clock | Click `⏩ +1h` in the top right HUD |
+| Sync LLM Context | Click `🔄 LLM Sync` to copy system directives for LiteRouter / GLM-5.3-flash |
 
-[AGPL-3.0](LICENSE), the same license as SillyTavern.
+---
+
+## 🛠️ Architecture & Tech Stack
+- **TypeScript**: Strictly typed state management and modular UI components (`src/`).
+- **Vanilla CSS3**: Tailored dark-mode glassmorphic design system (`css/` -> `style.css`).
+- **Pollinations AI**: Instant Flux & SDXL image generation without external API keys.
+- **LocalStorage**: Persistent estate and character progress across sessions.
+
+---
+
+## 📜 License
+MIT

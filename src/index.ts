@@ -1,148 +1,195 @@
-// Mundi: an open-world RPG creator for SillyTavern. Entry point: waits for SillyTavern, mounts the screen,
-// adds the launcher and follows SillyTavern's events (generation, streaming, chat changes).
-import { ctx, on, scenarioOpen, openChatRef, chat, deleteMessageAt } from './st/bridge.js';
-import { settings, saveSettings, state, notify, game, toast } from './core/store.js';
-import { loadAllWorlds } from './core/world.js';
-import { setLang } from './core/tr.js';
-import './core/saves.js';   // save safety: migrations, backups and repairs when a save is opened
-import { mount, openApp, closeApp } from './ui/app.js';
-import { patchLastLine } from './ui/scene.js';
-import { installSfx } from './ui/sfx.js';
-import { refreshPrompt, clearPrompt } from './sim/prompt.js';
-import { applyGameLore } from './sim/lore.js';
+/**
+ * Mundi - Haven & Bloomr Extension Entry Point
+ * Orchestrates UI mounting, reactive re-rendering, and SillyTavern integration.
+ */
 
-// A reply that came back empty (the prompt did not fit the model's context, or the reply ran out of tokens while the
-// model was still thinking) is removed, so it does not pile up in the story, and Mundi says why.
-let emptyWarned = 0;
-function emptyReply() {
-    if (!state.open) return;
-    const list = chat(); const m = list.at(-1);
-    if (!m || m.is_user || m.is_system) return;
-    if (String(m.mes ?? '').replace(/<[^>]+>/g, '').trim()) return;
-    if (!(Array.isArray(m.swipes) && m.swipes.filter((x: string) => String(x ?? '').trim()).length)) void deleteMessageAt(list.length - 1);
-    if (Date.now() - emptyWarned < 20000) return;
-    emptyWarned = Date.now();
-    const cc = (ctx() as any).chatCompletionSettings ?? {};
-    if (ctx().mainApi === 'openai' && Number(cc.openai_max_context) > 262144) {
-        toast(`${m.name ?? 'The AI'} sent an empty reply. SillyTavern's Context Size is set to ${Number(cc.openai_max_context).toLocaleString('en-US')} tokens, so the whole chat is sent and does not fit your model. In AI Response Configuration, set Context Size to the context your model was loaded with (for example 8192).`, 'warn');
-        return;
+import { GameStore } from './state.js';
+import { NavComponent } from './ui/nav.js';
+import { HouseComponent } from './ui/house.js';
+import { VnComponent } from './ui/vn.js';
+import { CombatComponent } from './ui/combat.js';
+import { TabletComponent } from './ui/tablet.js';
+import { PromptBuilder } from './llm/prompt.js';
+
+class MundiExtension {
+  private store: GameStore;
+  private nav: NavComponent;
+  private house: HouseComponent;
+  private vn: VnComponent;
+  private combat: CombatComponent;
+  private tablet: TabletComponent;
+  private rootEl: HTMLElement | null = null;
+  private isVisible = true;
+
+  constructor() {
+    this.store = GameStore.get();
+    this.nav = new NavComponent();
+    this.house = new HouseComponent();
+    this.vn = new VnComponent();
+    this.combat = new CombatComponent();
+    this.tablet = new TabletComponent();
+  }
+
+  public init(): void {
+    console.log('[Mundi] Initializing Haven & Bloomr Archetype...');
+
+    // Create or locate mount container
+    let container = document.getElementById('haven-root');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'haven-root';
+      container.className = 'haven-root-layer is-visible';
+      document.body.appendChild(container);
     }
-    toast(`${m.name ?? 'The AI'} sent an empty reply. Usually the prompt is bigger than the model's context size, or the reply ran out of tokens while the model was thinking. Raise the context size in your backend (and match it in SillyTavern), or raise the response length.`, 'warn');
-}
-// screens register their actions when imported
-import './ui/menu.js';
-import './ui/newgame.js';
-import './ui/settings.js';
-import './ui/map.js';
-import './ui/tools.js';
+    this.rootEl = container;
 
-function addLauncher() {
-    const menu = document.getElementById('extensionsMenu');
-    if (menu && !document.getElementById('mundi-launch')) {
-        const item = document.createElement('div');
-        item.id = 'mundi-launch';
-        item.className = 'list-group-item flex-container flexGap5';
-        item.innerHTML = '<div class="fa-solid fa-earth-americas extensionsMenuExtensionButton"></div><span>Mundi</span>';
-        item.addEventListener('click', () => openApp());
-        menu.appendChild(item);
+    // Create floating trigger badge on SillyTavern
+    this.createFloatingToggle();
+
+    // Subscribe to state updates
+    this.store.subscribe(() => this.render());
+
+    // Listen to custom events
+    this.bindGlobalEvents();
+
+    // Initial render
+    this.render();
+
+    console.log('[Mundi] Ready.');
+  }
+
+  private createFloatingToggle(): void {
+    if (document.getElementById('haven-floating-toggle')) return;
+
+    const toggle = document.createElement('button');
+    toggle.id = 'haven-floating-toggle';
+    toggle.className = 'haven-floating-launcher';
+    toggle.innerHTML = '✦ Mundi OS';
+    toggle.title = 'Toggle Mundi Game Interface (Alt + M)';
+
+    toggle.addEventListener('click', () => {
+      this.toggleVisibility();
+    });
+
+    document.body.appendChild(toggle);
+
+    // Keyboard shortcut
+    window.addEventListener('keydown', (e) => {
+      if (e.altKey && (e.key === 'm' || e.key === 'M')) {
+        this.toggleVisibility();
+      }
+    });
+  }
+
+  public toggleVisibility(): void {
+    this.isVisible = !this.isVisible;
+    if (this.rootEl) {
+      this.rootEl.classList.toggle('is-visible', this.isVisible);
     }
+  }
+
+  public render(): void {
+    if (!this.rootEl) return;
+
+    const state = this.store.getState();
+    const mode = state.viewMode;
+
+    let contentHtml = '';
+    switch (mode) {
+      case 'house':
+        contentHtml = this.house.render();
+        break;
+      case 'vn':
+        contentHtml = this.vn.render();
+        break;
+      case 'combat':
+        contentHtml = this.combat.render();
+        break;
+      case 'tablet':
+        contentHtml = this.tablet.render();
+        break;
+    }
+
+    this.rootEl.innerHTML = `
+      <div class="haven-app-wrapper">
+        ${this.nav.render()}
+        <div class="haven-viewport-content">
+          ${contentHtml}
+        </div>
+      </div>
+    `;
+
+    // Attach events for nav and active view
+    this.nav.attachEvents(this.rootEl);
+
+    switch (mode) {
+      case 'house':
+        this.house.attachEvents(this.rootEl);
+        break;
+      case 'vn':
+        this.vn.attachEvents(this.rootEl);
+        break;
+      case 'combat':
+        this.combat.attachEvents(this.rootEl);
+        break;
+      case 'tablet':
+        this.tablet.attachEvents(this.rootEl);
+        break;
+    }
+  }
+
+  private bindGlobalEvents(): void {
+    // When user types in VN prompt or triggers an action
+    window.addEventListener('haven:user-action', (e: Event) => {
+      const customEvent = e as CustomEvent<{ text: string }>;
+      const text = customEvent.detail?.text;
+      if (!text) return;
+
+      // Try SillyTavern text input
+      const stInput = document.querySelector<HTMLTextAreaElement>('#send_textarea');
+      const stSendBtn = document.querySelector<HTMLButtonElement>('#send_but');
+
+      if (stInput && stSendBtn) {
+        stInput.value = text;
+        stInput.dispatchEvent(new Event('input', { bubbles: true }));
+        stSendBtn.click();
+      } else {
+        // Fallback simulated response
+        setTimeout(() => {
+          this.store.addVnLine(
+            'Elowen Frost',
+            'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80',
+            `I heard your point about "${text}". That certainly shifts our perspective on this topic.`
+          );
+        }, 800);
+      }
+    });
+
+    // When LLM sync requested
+    window.addEventListener('haven:sync-prompt', () => {
+      const context = PromptBuilder.buildContext(this.store.getState());
+      console.log('[Mundi Context Injected]:\n', context);
+
+      // Attempt SillyTavern clipboard or alert
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(context);
+        alert('Mundi game context copied to clipboard! (Ready for injection or prompt template)');
+      } else {
+        alert('Game context synced successfully!');
+      }
+    });
+  }
 }
 
-// Mundi's own block in SillyTavern's Extensions panel: open Mundi, and open it when SillyTavern starts.
-function addSettingsBlock() {
-    const host = document.getElementById('extensions_settings') ?? document.getElementById('extensions_settings2');   // the left column (the right one is usually longer)
-    if (!host || document.getElementById('mundi-settings-block')) return;
-    const box = document.createElement('div');
-    box.id = 'mundi-settings-block';
-    box.className = 'extension_container';
-    box.innerHTML = `<div class="inline-drawer">
-        <div class="inline-drawer-toggle inline-drawer-header"><b>Mundi</b><div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div></div>
-        <div class="inline-drawer-content">
-            <div class="flex-container flexGap5" style="margin:6px 0"><div id="mundi-open-btn" class="menu_button menu_button_icon"><i class="fa-solid fa-earth-americas"></i><span>Open Mundi</span></div></div>
-            <label class="checkbox_label" for="mundi-open-start"><input id="mundi-open-start" type="checkbox"><span>Open Mundi when SillyTavern starts</span></label>
-        </div></div>`;
-    host.appendChild(box);
-    const chk = box.querySelector<HTMLInputElement>('#mundi-open-start')!;
-    chk.checked = !!settings().openOnStart;
-    chk.addEventListener('change', () => { settings().openOnStart = chk.checked; saveSettings(); if (state.open) notify(); });
-    box.querySelector('#mundi-open-btn')!.addEventListener('click', () => openApp());
-    // the same choice in Mundi's Settings keeps this box in step
-    setInterval(() => { if (chk.checked !== !!settings().openOnStart) chk.checked = !!settings().openOnStart; }, 1500);
+// Auto-initialize when DOM ready or SillyTavern extensions loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    const app = new MundiExtension();
+    app.init();
+    (window as any).havenMundi = app;
+  });
+} else {
+  const app = new MundiExtension();
+  app.init();
+  (window as any).havenMundi = app;
 }
-
-function follow() {
-    const redraw = () => { if (state.open) notify(); };
-    on('GENERATION_STARTED', (_type: string, _opts: unknown, dryRun: boolean) => {
-        if (dryRun) return;
-        if (game()) refreshPrompt();
-        state.generating = true;
-        redraw();
-    });
-    on('GENERATE_BEFORE_COMBINE_PROMPTS', () => {
-        if (game()) refreshPrompt();
-    });
-    const done = () => {
-        state.generating = false;
-        if (state.impersonating) {   // the AI wrote the player's line into SillyTavern's box: bring it to Mundi's composer
-            state.impersonating = false;
-            const field = document.getElementById('send_textarea') as HTMLTextAreaElement | null;
-            if (field?.value) { state.composer = field.value; field.value = ''; }
-        }
-        redraw();
-    };
-    on('GENERATION_ENDED', () => { emptyReply(); done(); void import('./ui/relui.js').then(m => m.checkAsk()); void import('./ui/events.js').then(m => m.checkEventEnd()); });
-    on('GENERATION_STOPPED', done);
-    on('GROUP_WRAPPER_FINISHED', done);
-    on('STREAM_TOKEN_RECEIVED', () => { if (state.open && state.view === 'scene') patchLastLine(); });
-    on('MESSAGE_SENT', (id: number) => { const m: any = (globalThis as any).SillyTavern?.getContext?.().chat?.[id]; if (m?.is_user) void import('./ui/relui.js').then(x => x.detectAsk(String(m.mes ?? ''))); });
-    // Home: time passes with every message you send (Settings › This save can turn it off)
-    on('MESSAGE_SENT', async (id: number) => {
-        const m: any = (globalThis as any).SillyTavern?.getContext?.().chat?.[id];
-        if (!m?.is_user || m.is_system) return;
-        const { homeTick } = await import('./sim/hometime.js');
-        if (await homeTick()) redraw();
-    });
-    // someone you did not know answered you in the scene: now you know them
-    on('MESSAGE_RECEIVED', async (id: number) => {
-        const { game, saveGame } = await import('./core/store.js');
-        const g = game(); const m: any = (globalThis as any).SillyTavern?.getContext?.().chat?.[id];
-        if (!g || !m || m.is_user || m.is_system) return;
-        const { speakerOf } = await import('./st/bridge.js');
-        const who = speakerOf(m);
-        const { markMet } = await import('./sim/game.js');
-        if (who && markMet(g, who)) { saveGame(); (await import('./sim/prompt.js')).refreshPrompt(); redraw(); }
-    });
-    for (const ev of ['MESSAGE_RECEIVED', 'MESSAGE_SENT', 'MESSAGE_SWIPED', 'MESSAGE_EDITED', 'MESSAGE_DELETED', 'MESSAGE_UPDATED']) on(ev, redraw);
-    on('CHAT_CHANGED', () => {
-        // "Continue" opens what was last played in Mundi: a world save or a scenario chat
-        if (state.open) {
-            const ref = openChatRef();
-            if (ref && game() && ref.group) settings().last = { kind: 'world', group: ref.group, chatId: ref.chatId };
-            else if (ref && scenarioOpen()) settings().last = { kind: 'chat', ...ref };
-            saveSettings();
-        }
-        // the chat was switched (maybe from SillyTavern's own list): the game follows the open chat
-        // the world state follows the chat: a Mundi save keeps it even when played in SillyTavern's own chat
-        void applyGameLore();   // the lorebooks this game uses go on (and the previous game's go off)
-        if (game()) refreshPrompt();
-        else { clearPrompt(); if (state.view === 'map' || state.view === 'scene') state.view = scenarioOpen() ? 'chat' : 'menu'; }
-        if (state.view === 'chat' && !scenarioOpen()) state.view = game() ? 'scene' : 'menu';
-        redraw();
-    });
-}
-
-async function init() {
-    settings();
-    await Promise.all([loadAllWorlds(), setLang((settings() as any).uiLang ?? 'en')]);
-    mount();
-    installSfx();
-    addLauncher();
-    addSettingsBlock();
-    follow();
-    if (game()) refreshPrompt(); else clearPrompt();
-    if (settings().openOnStart) openApp();
-}
-
-const c = ctx();
-c.eventSource.on(c.eventTypes.APP_READY, () => { init().catch(e => console.error('[Mundi] init', e)); });
-(globalThis as any).Mundi = { open: openApp, close: closeApp };

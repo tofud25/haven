@@ -1,0 +1,409 @@
+/* ==========================================================================
+   40-combat.css: The Undercroft - Dungeon RPG & Turn-Based Combat UI
+   ========================================================================== */
+
+.haven-combat-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #06090e;
+}
+
+/* TOP DUNGEON HEADER & PARTY STRIP */
+.haven-combat-header {
+  height: 80px;
+  background: rgba(6, 9, 14, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--haven-bg-glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  gap: 20px;
+  z-index: 5;
+}
+
+.dungeon-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dungeon-skull-icon {
+  font-size: 26px;
+  filter: drop-shadow(0 0 8px #ef4444);
+}
+
+.dungeon-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+
+.dungeon-zone {
+  font-size: 12px;
+  color: var(--haven-accent-cyan);
+}
+
+/* Party Status Strip */
+.party-status-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.party-member-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--haven-bg-glass-border);
+  border-radius: var(--haven-radius-lg);
+  padding: 6px 12px;
+  width: 210px;
+}
+
+.party-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--haven-radius-md);
+  object-fit: cover;
+  border: 1px solid var(--haven-accent);
+}
+
+.party-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.party-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.member-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.member-class {
+  font-size: 10px;
+  color: var(--haven-text-dim);
+}
+
+/* HP / MP Gauges */
+.gauge-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.gauge-track {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--haven-radius-full);
+  overflow: hidden;
+}
+
+.hp-gauge .gauge-fill {
+  background: linear-gradient(90deg, #10b981, #059669);
+  height: 100%;
+}
+
+.mp-gauge .gauge-fill {
+  background: linear-gradient(90deg, #3b82f6, #6366f1);
+  height: 100%;
+}
+
+.gauge-numbers {
+  font-size: 9px;
+  font-family: var(--haven-font-mono);
+  color: var(--haven-text-muted);
+  text-align: right;
+}
+
+/* MAIN ARENA */
+.haven-combat-arena {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.arena-background-scenery {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 50% 60%, rgba(6, 182, 212, 0.15) 0%, transparent 60%),
+    linear-gradient(180deg, rgba(6, 9, 14, 0.4) 0%, rgba(6, 9, 14, 0.95) 100%),
+    url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1600&q=80');
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.4) contrast(1.2);
+  z-index: 1;
+}
+
+.arena-mist-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at bottom, rgba(6, 182, 212, 0.2) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 2;
+  animation: mist-drift 6s infinite alternate ease-in-out;
+}
+
+@keyframes mist-drift {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.08) translateY(-10px); opacity: 0.9; }
+}
+
+/* FLOATING SPEECH BANTER BUBBLE */
+.combat-speech-bubble {
+  position: absolute;
+  top: 30px;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--haven-accent-cyan);
+  box-shadow: 0 4px 20px var(--haven-accent-cyan-glow);
+  padding: 10px 16px;
+  border-radius: var(--haven-radius-lg);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 500px;
+  animation: bounce-speech 3s infinite ease-in-out;
+}
+
+@keyframes bounce-speech {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.speech-speaker {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--haven-accent-cyan);
+}
+
+.speech-quote {
+  font-size: 13px;
+  color: #fff;
+  font-style: italic;
+}
+
+/* ENEMIES GROUP */
+.combat-enemies-group {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 60px;
+  width: 100%;
+  padding-bottom: 20px;
+}
+
+.combat-enemy-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  user-select: none;
+}
+
+.combat-enemy-unit:hover {
+  transform: scale(1.08);
+}
+
+.enemy-overhead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.enemy-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.enemy-hp-bar {
+  width: 120px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--haven-radius-full);
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.enemy-hp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ef4444, #f97316);
+  transition: width 0.3s ease;
+}
+
+.enemy-hp-text {
+  font-size: 10px;
+  font-family: var(--haven-font-mono);
+  color: var(--haven-text-muted);
+}
+
+.enemy-sprite {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.6));
+  animation: slime-squish 2.2s infinite ease-in-out;
+}
+
+@keyframes slime-squish {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.12, 0.88); }
+}
+
+.combat-victory-banner {
+  text-align: center;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--haven-accent-gold);
+  border-radius: var(--haven-radius-xl);
+  padding: 24px 36px;
+  box-shadow: 0 0 30px var(--haven-accent-gold-glow);
+}
+
+.combat-victory-banner h3 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  color: var(--haven-accent-gold);
+}
+
+.combat-victory-banner p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--haven-text-muted);
+}
+
+/* BOTTOM CONSOLE & LOG */
+.haven-combat-console {
+  height: 140px;
+  min-height: 140px;
+  background: rgba(10, 14, 22, 0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--haven-bg-glass-border);
+  display: flex;
+  padding: 12px 20px;
+  gap: 20px;
+  z-index: 5;
+}
+
+.combat-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 480px;
+}
+
+.combat-action-bar .haven-btn {
+  flex: 1;
+  height: 70px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--haven-radius-lg);
+  font-size: 13px;
+}
+
+.haven-btn-combat-attack {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+}
+
+.haven-btn-combat-loot {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  box-shadow: 0 4px 16px var(--haven-accent-gold-glow);
+}
+
+.haven-btn-combat-rest {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+}
+
+.haven-btn-combat-wave {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #fff;
+}
+
+.haven-btn-combat-retreat {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--haven-bg-glass-border);
+  color: var(--haven-text-muted);
+}
+
+/* Combat Log */
+.combat-log-container {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--haven-bg-glass-border);
+  border-radius: var(--haven-radius-lg);
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.combat-log-title {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--haven-text-dim);
+  margin-bottom: 4px;
+}
+
+.combat-log-scroll {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.combat-log-entry {
+  font-size: 12px;
+  font-family: var(--haven-font-mono);
+  color: var(--haven-text-muted);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.log-bullet {
+  color: var(--haven-accent-cyan);
+  font-size: 10px;
+}

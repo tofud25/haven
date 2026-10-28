@@ -1,0 +1,371 @@
+/* ==========================================================================
+   30-vn.css: Nordhaven Academy Visual Novel Scene & Dialogue UI
+   ========================================================================== */
+
+.haven-vn-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #0d1117;
+}
+
+/* TOP ACADEMY HEADER */
+.haven-vn-header {
+  height: 54px;
+  background: rgba(13, 17, 23, 0.85);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--haven-bg-glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 5;
+}
+
+.academy-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.academy-crest {
+  font-size: 22px;
+  filter: drop-shadow(0 0 6px var(--haven-accent-gold));
+}
+
+.academy-name {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+
+.academy-sub {
+  font-size: 11px;
+  color: var(--haven-accent-cyan);
+}
+
+.academy-time-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.academy-date-pill,
+.academy-clock-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--haven-bg-glass-border);
+  padding: 5px 12px;
+  border-radius: var(--haven-radius-full);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.day-count-tag {
+  background: rgba(99, 102, 241, 0.25);
+  color: #a5b4fc;
+  padding: 1px 6px;
+  border-radius: var(--haven-radius-sm);
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+/* MAIN STAGE */
+.haven-vn-stage {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.stage-scenery {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 60%),
+    linear-gradient(180deg, rgba(13, 17, 23, 0.2) 0%, rgba(13, 17, 23, 0.95) 100%),
+    url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=1600&q=80');
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.65) contrast(1.1);
+  z-index: 1;
+}
+
+.stage-lighting-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at bottom, transparent 30%, rgba(13, 17, 23, 0.8) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* CHARACTER SPRITES */
+.stage-sprites-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 85%;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  pointer-events: none;
+  z-index: 3;
+  padding: 0 10%;
+}
+
+.stage-sprite-wrapper {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.vn-character-sprite {
+  max-height: 100%;
+  max-width: 440px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.8));
+}
+
+.sprite-nametag {
+  position: absolute;
+  bottom: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--haven-bg-glass-border);
+  padding: 4px 12px;
+  border-radius: var(--haven-radius-full);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+
+/* FLOATING QUICK HUD ACTIONS (RIGHT SIDE) */
+.haven-vn-quick-hud {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 4;
+}
+
+.quick-hud-card {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--haven-bg-glass-border);
+  border-radius: var(--haven-radius-lg);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hud-title {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--haven-accent-gold);
+}
+
+.affinity-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.char-name {
+  width: 60px;
+  font-weight: 600;
+  color: var(--haven-text-muted);
+}
+
+.affinity-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--haven-radius-full);
+  overflow: hidden;
+}
+
+.affinity-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ec4899, #8b5cf6);
+  border-radius: var(--haven-radius-full);
+}
+
+.affinity-val {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  width: 28px;
+  text-align: right;
+}
+
+.quick-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vn-action-pill {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--haven-bg-glass-border);
+  color: var(--haven-text-main);
+  padding: 8px 12px;
+  border-radius: var(--haven-radius-md);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--haven-transition);
+}
+
+.vn-action-pill:hover {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: var(--haven-accent);
+  transform: translateX(-4px);
+}
+
+/* DIALOGUE BOX */
+.haven-vn-dialogue-section {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  padding: 0 20px 16px 20px;
+}
+
+.dialogue-box-frame {
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--haven-bg-glass-border);
+  border-radius: var(--haven-radius-xl);
+  padding: 16px 20px;
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dialogue-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.speaker-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.speaker-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--haven-radius-full);
+  background: var(--haven-accent-gold);
+  box-shadow: 0 0 8px var(--haven-accent-gold-glow);
+}
+
+.speaker-name {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--haven-accent-gold);
+  text-transform: uppercase;
+}
+
+.dialogue-nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dialogue-tool-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--haven-bg-glass-border);
+  color: var(--haven-text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--haven-radius-sm);
+  cursor: pointer;
+  transition: var(--haven-transition);
+}
+
+.dialogue-tool-btn:hover:not(:disabled) {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.dialogue-tool-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.dialogue-counter {
+  font-size: 11px;
+  color: var(--haven-text-dim);
+  font-family: var(--haven-font-mono);
+}
+
+/* Dialogue Content */
+.dialogue-content-area {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  min-height: 54px;
+}
+
+.dialogue-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--haven-radius-lg);
+  object-fit: cover;
+  border: 1px solid var(--haven-accent-gold);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.dialogue-text-bubble {
+  flex: 1;
+}
+
+.dialogue-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #f1f5f9;
+}
+
+/* Prompt Input Bar */
+.haven-vn-input-bar {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.haven-btn-send {
+  min-width: 100px;
+}
