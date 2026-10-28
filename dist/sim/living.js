@@ -224,7 +224,7 @@ export const heardRumors = (g) => L(g).rumors.filter(r => r.knownBy.includes(YOU
 export const rumorSource = (r) => garble(r.hops?.[YOU] ?? 1).replace(/^ \(|\)$/g, '');
 onDay.push((g, w) => [...lifeGoesOn(g, w), ...spreadRumors(g, w)]);
 export const TIE_TYPES = [['parent', 'parent of'], ['child', 'child of'], ['sibling', 'sibling of'], ['spouse', 'married to'], ['partner', 'partner of'], ['cousin', 'cousin of'], ['roommate', 'roommate of'], ['friend', 'friend of'], ['bestfriend', 'best friend of'], ['ally', 'ally of'], ['colleague', 'colleague of'], ['dating', 'dating'], ['rival', 'rival of'], ['enemy', 'enemy of'], ['ex', 'ex of'], ['mentor', 'mentor of'], ['apprentice', 'apprentice of']];
-export const TIE_TONES = [['close', 'Close'], ['good', 'Good'], ['neutral', 'Neutral'], ['tense', 'Tense'], ['hostile', 'Hostile']];
+export const TIE_TONES = [['close', 'Close (unrestricted)'], ['good', 'Good'], ['neutral', 'Neutral'], ['tense', 'Tense'], ['hostile', 'Hostile']];
 export const ties = (g) => (L(g).ties ??= []);
 export const tiesOf = (g, avatar) => ties(g).filter(t => t.a === avatar || t.b === avatar);
 export function setTie(g, t) {
@@ -258,7 +258,15 @@ export function tiesLine(g, present) {
     const list = ties(g).filter(t => here.has(t.a) || here.has(t.b));
     if (!list.length)
         return '';
-    return `Family and ties: ${list.map(t => `${nameOfId(g, t.a)} is ${TIE_TYPES.find(x => x[0] === t.type)?.[1] ?? t.type} ${nameOfId(g, t.b)}${t.tone !== 'neutral' ? ` (${t.tone} relationship)` : ''}`).join('; ')}.`;
+    return `Family and ties: ${list.map(t => {
+        const desc = TIE_TYPES.find(x => x[0] === t.type)?.[1] ?? t.type;
+        const toneStr = t.tone === 'close'
+            ? ' (close relationship: unrestricted to body and word)'
+            : t.tone !== 'neutral'
+                ? ` (${t.tone} relationship)`
+                : '';
+        return `${nameOfId(g, t.a)} is ${desc} ${nameOfId(g, t.b)}${toneStr}`;
+    }).join('; ')}.`;
 }
 void INVERSE;
 // A tie to {{user}} set at the start also sets where you stand with them (friends start close, enemies far apart).

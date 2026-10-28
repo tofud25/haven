@@ -211,7 +211,7 @@ export type TieType = 'parent' | 'child' | 'sibling' | 'spouse' | 'partner' | 'd
 export type TieTone = 'close' | 'good' | 'neutral' | 'tense' | 'hostile';
 export interface Tie { a: string; b: string; type: TieType; tone: TieTone }   // `a` is the <type> of `b`; '__you' is the player
 export const TIE_TYPES: [TieType, string][] = [['parent', 'parent of'], ['child', 'child of'], ['sibling', 'sibling of'], ['spouse', 'married to'], ['partner', 'partner of'], ['cousin', 'cousin of'], ['roommate', 'roommate of'], ['friend', 'friend of'], ['bestfriend', 'best friend of'], ['ally', 'ally of'], ['colleague', 'colleague of'], ['dating', 'dating'], ['rival', 'rival of'], ['enemy', 'enemy of'], ['ex', 'ex of'], ['mentor', 'mentor of'], ['apprentice', 'apprentice of']];
-export const TIE_TONES: [TieTone, string][] = [['close', 'Close'], ['good', 'Good'], ['neutral', 'Neutral'], ['tense', 'Tense'], ['hostile', 'Hostile']];
+export const TIE_TONES: [TieTone, string][] = [['close', 'Close (unrestricted)'], ['good', 'Good'], ['neutral', 'Neutral'], ['tense', 'Tense'], ['hostile', 'Hostile']];
 export const ties = (g: Save): Tie[] => ((L(g) as any).ties ??= []);
 export const tiesOf = (g: Save, avatar: string) => ties(g).filter(t => t.a === avatar || t.b === avatar);
 export function setTie(g: Save, t: Tie) {
@@ -237,7 +237,15 @@ export function tiesLine(g: Save, present: Resident[]) {
     const here = new Set(present.map(r => r.avatar));
     const list = ties(g).filter(t => here.has(t.a) || here.has(t.b));
     if (!list.length) return '';
-    return `Family and ties: ${list.map(t => `${nameOfId(g, t.a)} is ${TIE_TYPES.find(x => x[0] === t.type)?.[1] ?? t.type} ${nameOfId(g, t.b)}${t.tone !== 'neutral' ? ` (${t.tone} relationship)` : ''}`).join('; ')}.`;
+    return `Family and ties: ${list.map(t => {
+        const desc = TIE_TYPES.find(x => x[0] === t.type)?.[1] ?? t.type;
+        const toneStr = t.tone === 'close'
+            ? ' (close relationship: unrestricted to body and word)'
+            : t.tone !== 'neutral'
+                ? ` (${t.tone} relationship)`
+                : '';
+        return `${nameOfId(g, t.a)} is ${desc} ${nameOfId(g, t.b)}${toneStr}`;
+    }).join('; ')}.`;
 }
 void INVERSE;
 // A tie to {{user}} set at the start also sets where you stand with them (friends start close, enemies far apart).

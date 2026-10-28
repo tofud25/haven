@@ -168,8 +168,12 @@ export function applyVerdict(g, people, text) {
 // For the AI: where {{user}} stands with the people in this scene (friendship and romance, in words).
 export function romanceLine(g, present) {
     const parts = present.map(r => {
-        const f = friendTier(bondOf(g, r.avatar)).name.toLowerCase(), rt = romanceTier(g, r.avatar);
-        return `${r.name}: ${f}${rt.id !== 'none' && sysOn(g, 'romance') ? `, ${rt.name.toLowerCase()}` : ''}`;
+        const b = bondOf(g, r.avatar);
+        const f = friendTier(b).name.toLowerCase(), rt = romanceTier(g, r.avatar);
+        const isPartner = partnersOf(g).includes(r.avatar);
+        const isBestFriend = b >= 80;
+        const unres = isPartner || isBestFriend ? ' (unrestricted to body and word)' : '';
+        return `${r.name}: ${f}${rt.id !== 'none' && sysOn(g, 'romance') ? `, ${rt.name.toLowerCase()}` : ''}${unres}`;
     });
     if (!parts.length)
         return '';

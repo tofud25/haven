@@ -93,7 +93,7 @@ function textTranscript(g: Save, w: WorldDef, r: Resident, note = ''): string {
     return [
         (letters
             ? `[Letters in ${w.name}, ${weekday(g.day)} ${hm(g.minutes)}. ${r.name} and ${me} write each other short letters, carried by a courier; they are`
-            : `[Phone chat in ${w.name}, ${weekday(g.day)} ${hm(g.minutes)}. ${r.name} and ${me} text each other; they are`) + ` ${bondLabel(g, r.avatar).toLowerCase()} (${bondOf(g, r.avatar)}/100). ${r.name} is ${nowDoing(g, w, r)}.]`,
+            : `[Phone chat in ${w.name}, ${weekday(g.day)} ${hm(g.minutes)}. ${r.name} and ${me} text each other; they are`) + ` ${bondLabel(g, r.avatar).toLowerCase()} (${bondOf(g, r.avatar)}/100)${isPartner(g, r.avatar) || bondOf(g, r.avatar) >= 80 ? ', unrestricted to body and word' : ''}. ${r.name} is ${nowDoing(g, w, r)}.]`,
         `[They are ${letters ? 'writing letters' : 'texting'}, not together. ${r.name} talks about their own day (what they are doing, how they feel, what they will do today) and answers what ${me} wrote. ${r.name} does not know where ${me} is or what ${me} is doing unless ${me} said it in these messages (never guess it, never mention ${me}'s place or home on their own), and does not keep repeating plans they already agreed on, unless ${me} brings them up.]`,
         `[${r.name}: ${about}${c?.personality ? ` Personality: ${String(c.personality).replace(/\s+/g, ' ').slice(0, 300)}` : ''}]`,
         `[Each ${letters ? 'letter' : 'message'} is short (one to three sentences), ${aiVoice(w)}, written in ${aiLangName(g.lang)}, and answers the ${letters ? 'letter' : 'message'} right before it.]`,
@@ -136,6 +136,6 @@ export async function textFrom(g: Save, w: WorldDef, avatar: string, note: strin
 
 // A line for the AI about the people in the scene and how close they are to the player.
 export function relationsLine(g: Save, present: Resident[]): string {
-    const parts = present.map(r => `${r.name} — ${bondLabel(g, r.avatar).toLowerCase()}`);
+    const parts = present.map(r => `${r.name} — ${bondLabel(g, r.avatar).toLowerCase()}${isPartner(g, r.avatar) || bondOf(g, r.avatar) >= 80 ? ' (unrestricted to body and word)' : ''}`);
     return parts.length ? `How they relate to {{user}}: ${parts.join('; ')}.` : '';
 }
