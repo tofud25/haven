@@ -4,14 +4,14 @@
     --bg: #0d111c; --bg2: #141a2a; --panel: rgba(20, 26, 42, .92); --line: rgba(255, 255, 255, .12);
     --fg: #eef1f8; --muted: #9aa3b8; --accent: #35c6bf; --accent2: #ff8a65; --good: #59d36b; --bad: #ff5a6a; --warn: #f2c14e;
     --shadow: 0 10px 30px rgba(0, 0, 0, .45); --r: 14px;
-    /* explicit size: some ST setups put a transform on <html> (height 0), which makes inset:0 collapse */
-    position: fixed; top: 0; left: 0; right: auto; bottom: auto; width: 100vw; height: 100vh; height: 100dvh; z-index: 9000; color: var(--fg); background: var(--bg);
+    /* explicit size: full viewport with dynamic un-scale under zoom */
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100dvh; max-width: 100vw; max-height: 100dvh; z-index: 9000; color: var(--fg); background: var(--bg);
     font: 14px/1.45 "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; overflow: hidden; overflow: clip;
 }
 #mundi-root[hidden] { display: none; }
 body.mundi-open { overflow: hidden; }
 #mundi-root *, #mundi-root *::before, #mundi-root *::after { box-sizing: border-box; }
-#mundi-main { position: absolute; inset: 0; zoom: var(--mu-scale, 1); overflow: hidden; overflow: clip; }
+#mundi-main { position: absolute; top: 0; left: 0; width: calc(100% / var(--mu-scale, 1)); height: calc(100% / var(--mu-scale, 1)); zoom: var(--mu-scale, 1); overflow: hidden; overflow: clip; }
 
 #mundi-root h1, #mundi-root h2, #mundi-root h3, #mundi-root h4 { margin: 0; color: var(--fg); line-height: 1.2; font-weight: 700; }
 #mundi-root h2 { font-size: 20px; } #mundi-root h3 { font-size: 16px; } #mundi-root h4 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
