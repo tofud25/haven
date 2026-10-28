@@ -1,6 +1,6 @@
 /**
- * Mundi - Haven & Bloomr Extension Entry Point
- * Orchestrates UI mounting, reactive re-rendering, and SillyTavern integration.
+ * Haven - Life, Academy & Dungeon Extension Entry Point
+ * Mounts UI layer, hooks into SillyTavern's native Extensions menu & settings panel.
  */
 
 import { GameStore } from './state.js';
@@ -11,7 +11,7 @@ import { CombatComponent } from './ui/combat.js';
 import { TabletComponent } from './ui/tablet.js';
 import { PromptBuilder } from './llm/prompt.js';
 
-class MundiExtension {
+export class HavenExtension {
   private store: GameStore;
   private nav: NavComponent;
   private house: HouseComponent;
@@ -46,6 +46,9 @@ class MundiExtension {
     // Create floating trigger badge on SillyTavern
     this.createFloatingToggle();
 
+    // Hook into SillyTavern's native Extensions menu and settings panel
+    this.hookSillyTavernIntegrations();
+
     // Subscribe to state updates
     this.store.subscribe(() => this.render());
 
@@ -56,6 +59,21 @@ class MundiExtension {
     this.render();
 
     console.log('[Haven] Ready.');
+  }
+
+  public setVisible(visible: boolean): void {
+    this.isVisible = visible;
+    if (this.rootEl) {
+      this.rootEl.classList.toggle('is-visible', this.isVisible);
+    }
+    const chk = document.querySelector<HTMLInputElement>('#haven-enabled-toggle');
+    if (chk && chk.checked !== this.isVisible) {
+      chk.checked = this.isVisible;
+    }
+  }
+
+  public toggleVisibility(): void {
+    this.setVisible(!this.isVisible);
   }
 
   private createFloatingToggle(): void {
@@ -81,10 +99,128 @@ class MundiExtension {
     });
   }
 
-  public toggleVisibility(): void {
-    this.isVisible = !this.isVisible;
-    if (this.rootEl) {
-      this.rootEl.classList.toggle('is-visible', this.isVisible);
+  /**
+   * Hooks into SillyTavern's native #extensionsMenu (Cube icon) and
+   * #extensions_settings / #extensions_settings2 (Extensions Drawer).
+   */
+  private hookSillyTavernIntegrations(): void {
+    const tryInject = () => {
+      this.addLauncherItem();
+      this.addSettingsBlock();
+    };
+
+    // Run immediately
+    tryInject();
+
+    // Poll periodically to catch SillyTavern DOM construction
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts++;
+      tryInject();
+      if (attempts > 30) clearInterval(interval);
+    }, 1000);
+
+    // Also listen to click on extensions button in SillyTavern
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.closest('#extensions_button') || target.closest('#rm_button_extensions'))) {
+        setTimeout(tryInject, 100);
+      }
+    });
+
+    // SillyTavern event hook if available
+    try {
+      const stContext = (window as any).SillyTavern?.getContext?.();
+      if (stContext?.eventSource && stContext?.eventTypes) {
+        stContext.eventSource.on(stContext.eventTypes.APP_READY, () => {
+          tryInject();
+        });
+      }
+    } catch {
+      // Ignore
+    }
+  }
+
+  /**
+   * Injects Haven into SillyTavern's #extensionsMenu dropdown
+   */
+  private addLauncherItem(): void {
+    const menu = document.getElementById('extensionsMenu');
+    if (menu && !document.getElementById('haven-launch')) {
+      const item = document.createElement('div');
+      item.id = 'haven-launch';
+      item.className = 'list-group-item flex-container flexGap5';
+      item.style.cursor = 'pointer';
+      item.innerHTML = '<div class="fa-solid fa-hotel extensionsMenuExtensionButton"></div><span>Haven & Bloomr</span>';
+      item.addEventListener('click', () => {
+        this.setVisible(true);
+      });
+      menu.appendChild(item);
+    }
+  }
+
+  /**
+   * Injects Haven settings block into SillyTavern's #extensions_settings
+   */
+  private addSettingsBlock(): void {
+    const host = document.getElementById('extensions_settings') ?? document.getElementById('extensions_settings2');
+    if (!host || document.getElementById('haven-settings-block')) return;
+
+    const box = document.createElement('div');
+    box.id = 'haven-settings-block';
+    box.className = 'extension_container';
+    box.innerHTML = `
+      <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header">
+          <b>Haven & Bloomr</b>
+          <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+        </div>
+        <div class="inline-drawer-content" style="padding: 10px 14px;">
+          <div class="flex-container flexGap5" style="margin: 6px 0 10px 0;">
+            <div id="haven-open-btn" class="menu_button menu_button_icon" style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: #4f46e5; color: #fff; border-radius: 6px;">
+              <i class="fa-solid fa-hotel"></i>
+              <span>Mở giao diện Haven</span>
+            </div>
+          </div>
+          <label class="checkbox_label" for="haven-enabled-toggle" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input id="haven-enabled-toggle" type="checkbox" checked />
+            <span>Kích hoạt Haven UI (Hiển thị giao diện)</span>
+          </label>
+          <div style="font-size: 11px; opacity: 0.75; margin-top: 8px;">
+            💡 Phím tắt nhanh: <code>Alt + M</code> hoặc click nút nổi <b>✦ Haven OS</b> góc phải màn hình.
+          </div>
+        </div>
+      </div>
+    `;
+    host.appendChild(box);
+
+    const toggleHeader = box.querySelector('.inline-drawer-toggle');
+    const content = box.querySelector('.inline-drawer-content') as HTMLElement | null;
+    const icon = box.querySelector('.inline-drawer-icon');
+
+    if (toggleHeader && content) {
+      toggleHeader.addEventListener('click', () => {
+        const isHidden = content.style.display === 'none';
+        content.style.display = isHidden ? 'block' : 'none';
+        if (icon) {
+          icon.classList.toggle('down', isHidden);
+          icon.classList.toggle('up', !isHidden);
+        }
+      });
+    }
+
+    const openBtn = box.querySelector('#haven-open-btn');
+    if (openBtn) {
+      openBtn.addEventListener('click', () => {
+        this.setVisible(true);
+      });
+    }
+
+    const chk = box.querySelector<HTMLInputElement>('#haven-enabled-toggle');
+    if (chk) {
+      chk.addEventListener('change', () => {
+        this.setVisible(chk.checked);
+      });
     }
   }
 
@@ -168,12 +304,12 @@ class MundiExtension {
     // When LLM sync requested
     window.addEventListener('haven:sync-prompt', () => {
       const context = PromptBuilder.buildContext(this.store.getState());
-      console.log('[Mundi Context Injected]:\n', context);
+      console.log('[Haven Context Injected]:\n', context);
 
       // Attempt SillyTavern clipboard or alert
       if (navigator.clipboard) {
         navigator.clipboard.writeText(context);
-        alert('Mundi game context copied to clipboard! (Ready for injection or prompt template)');
+        alert('Haven game context copied to clipboard! (Ready for injection or prompt template)');
       } else {
         alert('Game context synced successfully!');
       }
@@ -182,14 +318,16 @@ class MundiExtension {
 }
 
 // Auto-initialize when DOM ready or SillyTavern extensions loaded
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    const app = new MundiExtension();
-    app.init();
-    (window as any).havenMundi = app;
-  });
-} else {
-  const app = new MundiExtension();
+function boot(): void {
+  const app = new HavenExtension();
   app.init();
-  (window as any).havenMundi = app;
+  (window as any).haven = app;
+  (window as any).Haven = app;
+  (window as any).Mundi = app;
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
 }
