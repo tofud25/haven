@@ -1,15 +1,12 @@
-"use strict";
 /**
  * Nordhaven Academy Visual Novel UI
  * Matches Screenshot 2 layout and features.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.VnComponent = void 0;
-const state_js_1 = require("../state.js");
-class VnComponent {
+import { GameStore } from '../state.js';
+export class VnComponent {
     store;
     constructor() {
-        this.store = state_js_1.GameStore.get();
+        this.store = GameStore.get();
     }
     render() {
         const { vn } = this.store.getState();
@@ -183,4 +180,3 @@ class VnComponent {
         }
     }
 }
-exports.VnComponent = VnComponent;

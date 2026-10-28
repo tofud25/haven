@@ -1,14 +1,11 @@
-"use strict";
 /**
  * Global Top Navigation Bar for Haven & Bloomr
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.NavComponent = void 0;
-const state_js_1 = require("../state.js");
-class NavComponent {
+import { GameStore } from '../state.js';
+export class NavComponent {
     store;
     constructor() {
-        this.store = state_js_1.GameStore.get();
+        this.store = GameStore.get();
     }
     render() {
         const state = this.store.getState();
@@ -93,4 +90,3 @@ class NavComponent {
         }
     }
 }
-exports.NavComponent = NavComponent;

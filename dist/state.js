@@ -1,11 +1,8 @@
-"use strict";
 /**
  * Reactive Game State Store for Haven & Bloomr
  * Persists data to localStorage and orchestrates UI updates.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GameStore = void 0;
-const pollinations_js_1 = require("./api/pollinations.js");
+import { PollinationsClient } from './api/pollinations.js';
 const STORAGE_KEY = 'haven_bloomr_save_v2';
 const INITIAL_ROOMS = {
     attic: {
@@ -281,7 +278,7 @@ function getInitialState() {
                     timestamp: 'earlier today',
                     mentions: ['@i_carry_the_one'],
                     content: 'Midday coffee break with Isolde. Preparing our defense for tomorrow’s enchantment lab!',
-                    imageUrl: pollinations_js_1.PollinationsClient.getImageUrl({
+                    imageUrl: PollinationsClient.getImageUrl({
                         prompt: 'two stylish academy anime girls sitting in a cozy warm cafe with glowing runes in background',
                         width: 800,
                         height: 600,
@@ -296,7 +293,7 @@ function getInitialState() {
         },
     };
 }
-class GameStore {
+export class GameStore {
     static instance;
     state;
     listeners = new Set();
@@ -479,4 +476,3 @@ class GameStore {
         return getInitialState();
     }
 }
-exports.GameStore = GameStore;

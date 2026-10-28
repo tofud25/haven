@@ -1,15 +1,12 @@
-"use strict";
 /**
  * The Undercroft - Turn-based Dungeon RPG & Combat UI
  * Matches Screenshot 3 layout and features.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CombatComponent = void 0;
-const state_js_1 = require("../state.js");
-class CombatComponent {
+import { GameStore } from '../state.js';
+export class CombatComponent {
     store;
     constructor() {
-        this.store = state_js_1.GameStore.get();
+        this.store = GameStore.get();
     }
     render() {
         const { combat } = this.store.getState();
@@ -209,4 +206,3 @@ class CombatComponent {
         }
     }
 }
-exports.CombatComponent = CombatComponent;

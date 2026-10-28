@@ -1,12 +1,14 @@
 {
-  "display_name": "Haven & Bloomr: Life, Academy & Dungeon",
-  "loading_order": 100,
+  "display_name": "Haven",
+  "loading_order": 10,
   "requires": [],
   "optional": [],
-  "js": "dist/index.js",
+  "dependencies": [],
+  "js": "index.js",
   "css": "style.css",
   "author": "Antigravity",
   "version": "2.0.0",
   "homePage": "https://github.com/tofud25/haven",
-  "description": "Comprehensive SillyTavern extension featuring Haven House (estate builder), Nordhaven VN dialogue, The Undercroft turn-based combat, and Bloomr simulated tablet OS with free AI image generation."
+  "auto_update": true,
+  "description": "Haven & Bloomr: Life, Academy & Dungeon Archetype for SillyTavern"
 }

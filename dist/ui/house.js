@@ -1,15 +1,12 @@
-"use strict";
 /**
  * Haven House - Dollhouse Cross-Section Estate Management UI
  * Matches Screenshot 1 layout and features.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.HouseComponent = void 0;
-const state_js_1 = require("../state.js");
-class HouseComponent {
+import { GameStore } from '../state.js';
+export class HouseComponent {
     store;
     constructor() {
-        this.store = state_js_1.GameStore.get();
+        this.store = GameStore.get();
     }
     render() {
         const { estate } = this.store.getState();
@@ -254,4 +251,3 @@ class HouseComponent {
         }
     }
 }
-exports.HouseComponent = HouseComponent;

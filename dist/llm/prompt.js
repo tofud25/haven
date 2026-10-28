@@ -1,11 +1,8 @@
-"use strict";
 /**
  * LLM Prompt Context Generator
  * Formats game world state into clean system instructions injected into SillyTavern.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PromptBuilder = void 0;
-class PromptBuilder {
+export class PromptBuilder {
     static buildContext(state) {
         const estate = state.estate;
         const currentRoom = estate.rooms[estate.selectedRoomId] || estate.rooms.hearth;
@@ -40,4 +37,3 @@ Stay fully in character. Acknowledge the player's surroundings and current game 
 `.trim();
     }
 }
-exports.PromptBuilder = PromptBuilder;

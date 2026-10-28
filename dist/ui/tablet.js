@@ -1,16 +1,13 @@
-"use strict";
 /**
  * Bloomr Tablet OS - In-Game Simulated Social Network & AI Photo Feed UI
  * Matches Screenshot 4 layout and features.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TabletComponent = void 0;
-const state_js_1 = require("../state.js");
-const pollinations_js_1 = require("../api/pollinations.js");
-class TabletComponent {
+import { GameStore } from '../state.js';
+import { PollinationsClient } from '../api/pollinations.js';
+export class TabletComponent {
     store;
     constructor() {
-        this.store = state_js_1.GameStore.get();
+        this.store = GameStore.get();
     }
     render() {
         const { tablet } = this.store.getState();
@@ -380,7 +377,7 @@ class TabletComponent {
             aiArtBtn.addEventListener('click', () => {
                 const userPrompt = window.prompt('Enter image prompt for Pollinations AI (Flux):', 'anime fantasy student reading arcane book in cozy library, warm cinematic lighting, high quality');
                 if (userPrompt) {
-                    const url = pollinations_js_1.PollinationsClient.getImageUrl({ prompt: userPrompt, width: 720, height: 480 });
+                    const url = PollinationsClient.getImageUrl({ prompt: userPrompt, width: 720, height: 480 });
                     this.store.createPost(postInput.value.trim() || userPrompt, url);
                     postInput.value = '';
                 }
@@ -393,7 +390,7 @@ class TabletComponent {
                 const state = this.store.getState();
                 const post = state.tablet.feed.find((p) => p.id === postId);
                 if (post) {
-                    const newUrl = pollinations_js_1.PollinationsClient.getImageUrl({
+                    const newUrl = PollinationsClient.getImageUrl({
                         prompt: post.content + ', ultra detailed cinematic photo',
                         seed: Math.floor(Math.random() * 999999),
                     });
@@ -446,4 +443,3 @@ class TabletComponent {
         });
     }
 }
-exports.TabletComponent = TabletComponent;

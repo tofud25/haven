@@ -1,18 +1,15 @@
-"use strict";
 /**
  * Haven - Life, Academy & Dungeon Extension Entry Point
  * Mounts UI layer, hooks into SillyTavern's native Extensions menu & settings panel.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.HavenExtension = void 0;
-const state_js_1 = require("./state.js");
-const nav_js_1 = require("./ui/nav.js");
-const house_js_1 = require("./ui/house.js");
-const vn_js_1 = require("./ui/vn.js");
-const combat_js_1 = require("./ui/combat.js");
-const tablet_js_1 = require("./ui/tablet.js");
-const prompt_js_1 = require("./llm/prompt.js");
-class HavenExtension {
+import { GameStore } from './state.js';
+import { NavComponent } from './ui/nav.js';
+import { HouseComponent } from './ui/house.js';
+import { VnComponent } from './ui/vn.js';
+import { CombatComponent } from './ui/combat.js';
+import { TabletComponent } from './ui/tablet.js';
+import { PromptBuilder } from './llm/prompt.js';
+export class HavenExtension {
     store;
     nav;
     house;
@@ -22,12 +19,12 @@ class HavenExtension {
     rootEl = null;
     isVisible = true;
     constructor() {
-        this.store = state_js_1.GameStore.get();
-        this.nav = new nav_js_1.NavComponent();
-        this.house = new house_js_1.HouseComponent();
-        this.vn = new vn_js_1.VnComponent();
-        this.combat = new combat_js_1.CombatComponent();
-        this.tablet = new tablet_js_1.TabletComponent();
+        this.store = GameStore.get();
+        this.nav = new NavComponent();
+        this.house = new HouseComponent();
+        this.vn = new VnComponent();
+        this.combat = new CombatComponent();
+        this.tablet = new TabletComponent();
     }
     init() {
         console.log('[Haven] Initializing Haven & Bloomr Archetype...');
@@ -269,7 +266,7 @@ class HavenExtension {
         });
         // When LLM sync requested
         window.addEventListener('haven:sync-prompt', () => {
-            const context = prompt_js_1.PromptBuilder.buildContext(this.store.getState());
+            const context = PromptBuilder.buildContext(this.store.getState());
             console.log('[Haven Context Injected]:\n', context);
             // Attempt SillyTavern clipboard or alert
             if (navigator.clipboard) {
@@ -282,7 +279,6 @@ class HavenExtension {
         });
     }
 }
-exports.HavenExtension = HavenExtension;
 // Auto-initialize when DOM ready or SillyTavern extensions loaded
 function boot() {
     const app = new HavenExtension();

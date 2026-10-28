@@ -1,11 +1,8 @@
-"use strict";
 /**
  * Pollinations AI: Free, high-speed, unauthenticated AI image generator
  * Powers dynamic photo generation for Bloomr social feed posts.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PollinationsClient = void 0;
-class PollinationsClient {
+export class PollinationsClient {
     static BASE_URL = 'https://image.pollinations.ai/prompt';
     /**
      * Generates a direct URL for an AI generated image.
@@ -31,4 +28,3 @@ class PollinationsClient {
         return `masterpiece, high quality anime semi-realistic art, ${characterName} in ${location}, ${activity}, aesthetic lighting, cinematic composition, depth of field, vibrant colors, detailed clothing and environment`;
     }
 }
-exports.PollinationsClient = PollinationsClient;
